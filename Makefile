@@ -1,5 +1,5 @@
 varsort: varsort.o
-	gcc -O -Wall -o varsort varsort.c
+	gcc -O -Wall -Werror -o varsort varsort.c
 
 clean:
 	rm varsort
