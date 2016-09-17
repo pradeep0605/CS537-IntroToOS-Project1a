@@ -187,7 +187,7 @@ main(int arg_count, char *arg_vector[]) {
   /* If there are no 4 arguments to the program, then print usage and
    * terminate with error.
    */
-  if (arg_count < 5) {
+  if (arg_count != 5) {
     print_usage();
     /* Exit with error */
     goto exit;
