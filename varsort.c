@@ -1,13 +1,13 @@
 /*
  *  +================================================+
- *  ||  University of Wisconsin--Madison      ||
+ *  ||        University of Wisconsin--Madison      ||
  *  +================================================+
  *
  *  CS537   : Intro to OS, first assignment  (prj1a).
  *  Author  : Pradeep Kashyap Ramaswamy
  *  Email   : pradeep.kashyap@wisc.edu
  *
- *  This file sorts 'R' records based on key 'K' each with data size 'N'.
+ *  This file sorts 'R' records based on key 'K' each with size of 'N' ints.
  */
 
 #include <stdio.h>
