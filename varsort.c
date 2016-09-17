@@ -148,16 +148,13 @@ write_sorted_data(mem_data_t *mem_data, file_data_t *file) {
 
   /* Write each record to the output file */
   for (i = 0; i < R; ++i) {
-    if (write(file->fd, &mem_data->rarray[i].key,
-      sizeof(mem_data->rarray[i].key)) == -1) {
+    /* Write key and data_ints together */
+    if (write(file->fd, &mem_data->rarray[i], sizeof(mem_data->rarray[i].key) +
+        sizeof(mem_data->rarray[i].data_ints)) == -1) {
       fprintf(stderr, "Error in writing to output file: %d\n", __LINE__);
       goto error;
     }
-    if (write(file->fd, &mem_data->rarray[i].data_ints,
-      sizeof(mem_data->rarray[i].data_ints)) == -1) {
-      fprintf(stderr, "Error in writing to output file: %d\n", __LINE__);
-      goto error;
-    }
+    /* Write the data part of if it exists. i.e if data_ints != 0 */
     if (mem_data->rarray[i].data_ints) {
       if (write(file->fd, mem_data->rarray[i].data_ptr,
         mem_data->rarray[i].data_ints * sizeof(uint)) == -1) {
