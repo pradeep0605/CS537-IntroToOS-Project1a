@@ -1,4 +1,5 @@
-/*        +================================================+
+/*
+ *        +================================================+
  *        ||        University of Wisconsin--Madison      ||
  *        +================================================+
  *
@@ -97,8 +98,15 @@ populate_record_array(file_data_t *file, mem_data_t *mem_data) {
         for (i = 0; i < R; ++i) {
                 record = (rec_nodata_t *) cur_rec_ptr;
                 mem_data->rarray_base[i] =  *((rec_dataptr_t *) record);
-                mem_data->rarray_base[i].data_ptr = cur_rec_ptr +
-                        sizeof(*record);
+                /* Data pointer should be NULL when there is no data at all for
+                 * the record.
+                 */
+                if (mem_data->rarray_base[i].data_ints) {
+                        mem_data->rarray_base[i].data_ptr = cur_rec_ptr +
+                                sizeof(*record);
+                } else {
+                        mem_data->rarray_base[i].data_ptr = NULL;
+                }
                 cur_rec_ptr += (sizeof(*record) + (record->data_ints *
                         sizeof(uint)));
         }
@@ -116,9 +124,9 @@ error:
         return -1;
 }
 
-int comparator(const void *data1, const void *data2) {
-        return (((rec_dataptr_t *) data1)->key > ((rec_dataptr_t *)
-                data2)->key);
+inline int
+comparator(const void *data1, const void *data2) {
+        return (*((uint *) data1) > *((uint *)data2));
 }
 
 void
@@ -156,12 +164,15 @@ write_sorted_data(mem_data_t *mem_data, file_data_t *file) {
                                 __LINE__);
                         goto error;
                 }
-                if (write(file->fd, mem_data->rarray_base[i].data_ptr,
-                        mem_data->rarray_base[i].data_ints *
-                        sizeof(uint)) == -1) {
-                        fprintf(stderr, "Error in writing to output file: %d\n",
-                                __LINE__);
-                        goto error;
+                if (mem_data->rarray_base[i].data_ints) {
+                        if (write(file->fd, mem_data->rarray_base[i].data_ptr,
+                                mem_data->rarray_base[i].data_ints *
+                                sizeof(uint)) == -1) {
+                                fprintf(stderr,
+                                        "Error in writing to output file: %d\n",
+                                        __LINE__);
+                                goto error;
+                        }
                 }
         }
         return 0;
