@@ -135,7 +135,7 @@ int
 write_sorted_data(mem_data_t *mem_data, file_data_t *file) {
   uint i = 0, R = file->R;
 
-  if ((file->fd = open(file->name, O_WRONLY | O_CREAT, S_IRWXU)) == -1) {
+  if ((file->fd = open(file->name, O_WRONLY|O_CREAT|O_TRUNC, S_IRWXU)) == -1) {
     fprintf(stderr, "Error: Cannot open file %s\n", file->name);
     goto error;
   }
