@@ -132,6 +132,7 @@ sort_records(mem_data_t *mem_data, uint R) {
 int
 write_sorted_data(mem_data_t *mem_data, file_data_t *file) {
   uint i = 0, R = file->R;
+  int size = 0;
 
   if ((file->fd = open(file->name, O_WRONLY|O_CREAT|O_TRUNC, S_IRWXU)) == -1) {
     fprintf(stderr, "Error: Cannot open file %s\n", file->name);
@@ -146,10 +147,10 @@ write_sorted_data(mem_data_t *mem_data, file_data_t *file) {
 
   /* Write each record to the output file */
   for (i = 0; i < R; ++i) {
-      if (write(file->fd, (void*) mem_data->rarray[i].data_ptr,
-        mem_data->rarray[i].data_ints * sizeof(uint) +
-        sizeof(rec_nodata_t)) == -1) {
-        fprintf(stderr, "Error in writing to output file: %d\n", __LINE__);
+      size = mem_data->rarray[i].data_ints * sizeof(uint) +
+      sizeof(rec_nodata_t);
+      if (write(file->fd, (void*) mem_data->rarray[i].data_ptr, size) != size) {
+        fprintf(stderr, "%d Error in writing to output file: %d\n", i, __LINE__);
         goto error;
       }
   }
